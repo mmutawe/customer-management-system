@@ -1,6 +1,8 @@
 package com.mmutawe.explore.microservice.services;
 
-import com.mmutawe.explore.microservice.dtos.CustomerAuthResponse;
+//import com.mmutawe.explore.microservice.dtos.CustomerAuthResponse;
+import com.mmutawe.explore.microservice.clients.customer.auth.controllers.CustomerAuth;
+import com.mmutawe.explore.microservice.clients.customer.auth.dtos.CustomerAuthResponse;
 import com.mmutawe.explore.microservice.dtos.CustomerRequest;
 import com.mmutawe.explore.microservice.entities.Customer;
 import com.mmutawe.explore.microservice.repositories.CustomerRepository;
@@ -15,11 +17,13 @@ public class CustomerService {
 
     private final CustomerRepository repository;
     private final RestTemplate restTemplate;
+    private final CustomerAuth customerAuthClient;
 
     @Autowired
-    public CustomerService(CustomerRepository repository, RestTemplate restTemplate) {
+    public CustomerService(CustomerRepository repository, RestTemplate restTemplate, CustomerAuth customerAuthClient) {
         this.repository = repository;
         this.restTemplate = restTemplate;
+        this.customerAuthClient = customerAuthClient;
     }
 
     public Customer registerCustomer(CustomerRequest customerRequest){
@@ -33,10 +37,12 @@ public class CustomerService {
         repository.saveAndFlush(customer);
 
         // check if customer is authorized
-        CustomerAuthResponse customerAuthResponse = restTemplate.getForObject(
-                "http://customer-auth-api/api/v1/auth-check/{customerId}",
-                CustomerAuthResponse.class,
-                customer.getId());
+//        CustomerAuthResponse customerAuthResponse = restTemplate.getForObject(
+//                "http://customer-auth-api/api/v1/auth-check/{customerId}",
+//                CustomerAuthResponse.class,
+//                customer.getId());
+
+        CustomerAuthResponse customerAuthResponse = customerAuthClient.isCustomerAuthorized(customer.getId());
 
         log.info("customer authorized id: {}", customerAuthResponse.getCustomerId());
 

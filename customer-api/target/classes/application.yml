@@ -18,8 +18,17 @@ spring:
         format_sql: true
     show-sql: true
 
+# Theres a bug with New version of OpenFeign, it doesnt work with Eureka Load balancer
+  cloud:
+    discovery:
+      client:
+        simple:
+          instances:
+            currency-exchange-service[0]:
+              uri: http://customer-auth-api:8081
+            currency-exchange-service[1]:
+              uri: http://customer-auth-api:8082
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka
-

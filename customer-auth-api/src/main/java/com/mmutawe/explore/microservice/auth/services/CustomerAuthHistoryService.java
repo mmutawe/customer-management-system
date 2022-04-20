@@ -2,6 +2,7 @@ package com.mmutawe.explore.microservice.auth.services;
 
 import com.mmutawe.explore.microservice.auth.entities.CustomerAuthHistory;
 import com.mmutawe.explore.microservice.auth.repositories.CustomerAuthHistoryRepository;
+import com.mmutawe.explore.microservice.clients.customer.auth.dtos.CustomerAuthResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +14,7 @@ public class CustomerAuthHistoryService {
 
     private final CustomerAuthHistoryRepository repository;
 
-    public CustomerAuthHistory isCustomerAuthorized(Long customerId){
+    public CustomerAuthResponse isCustomerAuthorized(Long customerId) {
 
         CustomerAuthHistory customerAuthHistory = CustomerAuthHistory.builder()
                 .customerId(customerId)
@@ -23,6 +24,6 @@ public class CustomerAuthHistoryService {
 
         repository.save(customerAuthHistory);
 
-        return customerAuthHistory;
+        return new CustomerAuthResponse(customerId, customerAuthHistory.getIsAuthorized());
     }
 }
