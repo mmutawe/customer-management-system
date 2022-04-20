@@ -34,7 +34,7 @@ public class CustomerService {
 
         // check if customer is authorized
         CustomerAuthResponse customerAuthResponse = restTemplate.getForObject(
-                "http://localhost:8081/api/v1/auth-check/{customerId}",
+                "http://customer-auth-api/api/v1/auth-check/{customerId}",
                 CustomerAuthResponse.class,
                 customer.getId());
 
