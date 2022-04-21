@@ -13,6 +13,7 @@
         <module>customer-auth-api</module>
         <module>eureka-server</module>
         <module>clients-api</module>
+        <module>notification-api</module>
     </modules>
 
     <properties>

@@ -2,28 +2,31 @@ package com.mmutawe.explore.microservice.services;
 
 //import com.mmutawe.explore.microservice.dtos.CustomerAuthResponse;
 import com.mmutawe.explore.microservice.clients.customer.auth.controllers.CustomerAuth;
+import com.mmutawe.explore.microservice.clients.customer.auth.controllers.NotificationFeign;
 import com.mmutawe.explore.microservice.clients.customer.auth.dtos.CustomerAuthResponse;
+import com.mmutawe.explore.microservice.clients.customer.auth.dtos.NotificationRequest;
 import com.mmutawe.explore.microservice.dtos.CustomerRequest;
 import com.mmutawe.explore.microservice.entities.Customer;
 import com.mmutawe.explore.microservice.repositories.CustomerRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 @Slf4j
 @Service
 public class CustomerService {
 
     private final CustomerRepository repository;
-    private final RestTemplate restTemplate;
     private final CustomerAuth customerAuthClient;
+    private final NotificationFeign notificationFeign;
+//    private final RestTemplate restTemplate;
 
     @Autowired
-    public CustomerService(CustomerRepository repository, RestTemplate restTemplate, CustomerAuth customerAuthClient) {
+    public CustomerService(CustomerRepository repository, /*RestTemplate restTemplate,*/ CustomerAuth customerAuthClient, NotificationFeign notificationFeign) {
         this.repository = repository;
-        this.restTemplate = restTemplate;
+//        this.restTemplate = restTemplate;
         this.customerAuthClient = customerAuthClient;
+        this.notificationFeign = notificationFeign;
     }
 
     public Customer registerCustomer(CustomerRequest customerRequest){
@@ -50,6 +53,15 @@ public class CustomerService {
 //            throw new IllegalStateException("customer is not authorized");
             log.error("customer is not authorized");
         }
+
+        // send notification
+        NotificationRequest notificationRequest = NotificationRequest.builder()
+                .customerId(customer.getId())
+                .customerEmail(customer.getEmail())
+                .message("a test notification message...")
+                .build();
+        notificationFeign.sendNotification(notificationRequest);
+
         return customer;
     }
 }

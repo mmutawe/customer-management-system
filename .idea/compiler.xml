@@ -9,6 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="clients-api" />
         <module name="customer-api" />
+        <module name="notification-api" />
         <module name="customer-auth-api" />
         <module name="eureka-server" />
       </profile>
