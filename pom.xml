@@ -15,6 +15,7 @@
         <module>clients-api</module>
         <module>notification-api</module>
         <module>api-gateway</module>
+        <module>amqp-api</module>
     </modules>
 
     <properties>
