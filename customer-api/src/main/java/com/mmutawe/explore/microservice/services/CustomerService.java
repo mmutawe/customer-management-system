@@ -1,6 +1,7 @@
 package com.mmutawe.explore.microservice.services;
 
 //import com.mmutawe.explore.microservice.dtos.CustomerAuthResponse;
+import com.mmutawe.explore.microservice.amqp.producers.RabbitMQProducer;
 import com.mmutawe.explore.microservice.clients.customer.auth.controllers.CustomerAuth;
 import com.mmutawe.explore.microservice.clients.customer.auth.controllers.NotificationFeign;
 import com.mmutawe.explore.microservice.clients.customer.auth.dtos.CustomerAuthResponse;
@@ -19,14 +20,16 @@ public class CustomerService {
     private final CustomerRepository repository;
     private final CustomerAuth customerAuthClient;
     private final NotificationFeign notificationFeign;
+    private final RabbitMQProducer rabbitMQProducer;
 //    private final RestTemplate restTemplate;
 
     @Autowired
-    public CustomerService(CustomerRepository repository, /*RestTemplate restTemplate,*/ CustomerAuth customerAuthClient, NotificationFeign notificationFeign) {
+    public CustomerService(CustomerRepository repository, /*RestTemplate restTemplate,*/ CustomerAuth customerAuthClient, NotificationFeign notificationFeign, RabbitMQProducer rabbitMQProducer) {
         this.repository = repository;
 //        this.restTemplate = restTemplate;
         this.customerAuthClient = customerAuthClient;
         this.notificationFeign = notificationFeign;
+        this.rabbitMQProducer = rabbitMQProducer;
     }
 
     public Customer registerCustomer(CustomerRequest customerRequest){
@@ -60,7 +63,15 @@ public class CustomerService {
                 .customerEmail(customer.getEmail())
                 .message("a test notification message...")
                 .build();
-        notificationFeign.sendNotification(notificationRequest);
+
+//        notificationFeign.sendNotification(notificationRequest);
+
+        // async
+        rabbitMQProducer.publish(
+                notificationRequest,
+                "internal.exchage",
+                "internal.notification.routing-key"
+        );
 
         return customer;
     }

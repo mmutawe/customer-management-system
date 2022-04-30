@@ -9,7 +9,12 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableFeignClients(
         basePackages = "com.mmutawe.explore.microservice.clients.customer.auth"
 )
-@SpringBootApplication
+@SpringBootApplication(
+        scanBasePackages = {
+                "com.mmutawe.explore.microservice",
+                "com.mmutawe.explore.microservice.amqp"
+        }
+)
 public class CustomerApiApplication {
     public static void main(String[] args) {
         SpringApplication.run(CustomerApiApplication.class, args);
